@@ -2,8 +2,6 @@
 
 import { MessageSquarePlus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { User } from "@clerk/nextjs/server";
-import { UserButton, UserProfile } from "@clerk/nextjs";
 
 interface ChatHistory {
     id: string;
@@ -156,7 +154,6 @@ export function ChatSidebar({
                 <div className="p-3 border-t border-border">
                     <div className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-sidebar-accent/50 cursor-pointer transition-colors">
                         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-sm">
-                            <UserButton/>
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-sidebar-foreground truncate">

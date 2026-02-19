@@ -124,7 +124,7 @@
 
 @layer utilities {
   .background {
-    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 text-black;
+    @apply bg-gradient-to-b from-[#6366f1]/10 via-transparent to-transparent ;
   }
 
   .dark .background {

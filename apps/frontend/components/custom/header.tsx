@@ -1,10 +1,9 @@
-import { Mail, MenuIcon, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import * as motion from "motion/react-client";
 import Link from "next/link";
 import { ModeToggle } from "./themebtn";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { Input } from "../ui/input";
 import { UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { MenuBar } from "./MenuBar";
@@ -77,7 +76,7 @@ const Header = ({ variant = "landing", onMenuClick }: HeaderProps) => {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="fixed top-0 left-0 right-0 z-[100] bg-sidebar/95 backdrop-blur-md border-b border-sidebar-border"
+      className="fixed top-0 left-0 right-0 z-[100] bg-gradient-to-b from-[#6366f1]/10 via-transparent to-transparent  backdrop-blur-md border-b border-sidebar-border"
     >
       <div className="px-2 flex max-w-full items-center justify-between py-4">
 
@@ -92,10 +91,10 @@ const Header = ({ variant = "landing", onMenuClick }: HeaderProps) => {
             transition={{ type: "spring", stiffness: 300 }}
           >
             <Image
-              src="/logo.png"
+              src="/favicon.png"
               alt="NeuroInbox Logo"
-              width={48}
-              height={48}
+              width={28}
+              height={28}
               className="object-contain"
             />
           </motion.div>

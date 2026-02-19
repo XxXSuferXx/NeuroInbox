@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Funnel_Sans,Syne_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
 import ReduxProvider from "./ReduxProvider";
 
 const funnelSans = Funnel_Sans({
@@ -35,9 +34,7 @@ export default function RootLayout({
         className={`${funnelSans.variable} ${syneMono.variable} antialiased `+"scrollbar"}
       >
         
-        <ClerkProvider>
           <ReduxProvider>{children}</ReduxProvider>
-        </ClerkProvider>
       </body>
     </html>
   );
