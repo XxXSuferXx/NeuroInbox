@@ -1,11 +1,7 @@
-export interface MessageType{
-
-}
-
 export interface EmailMessageType {
-    id:number,
-    sender:string,
-    subject:string,
-    preview:string,
-    time:string,
+  id: number;
+  sender: string;
+  subject: string;
+  preview: string;
+  time: string;
 }

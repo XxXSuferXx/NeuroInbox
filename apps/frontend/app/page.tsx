@@ -1,560 +1,796 @@
-"use client"
+"use client";
 
-import * as motion from "motion/react-client";
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Mail, Sparkles, Zap, Shield, Users, CircleCheckIcon } from "lucide-react"
-import Link from "next/link"
-import { Header } from "@/components/custom/header"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import HeroSection from "@/components/custom/HeroSection"
-import { ReactNode } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  Bot,
+  ChevronRight,
+  Clock3,
+  Command,
+  Inbox,
+  Layers3,
+  MessageSquareText,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  Users2,
+  WandSparkles,
+  Workflow,
+} from "lucide-react";
+import { Header } from "@/components/custom/header";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CardSpotlight } from "@/components/ui/card-spotlight";
-export default function LandingPage() {
 
-  const workItems = [
-    {
-      step: "01",
-      title: "Connect Your Accounts",
-      description: "Add your email accounts with secure API tokens. We support all major providers.",
-    },
-    {
-      step: "02",
-      title: "Chat with AI",
-      description: "Use natural language to manage emails. Execute MCP commands for advanced workflows.",
-    },
-    {
-      step: "03",
-      title: "Stay Organized",
-      description: "Let AI prioritize and categorize. Focus on what matters most.",
-    },
-  ];
-  const FeatureItems = [
-    {
-      icon: Sparkles,
-      title: "AI-Powered Chat",
-      description:
-        "Interact with your emails using natural language. Let AI draft, organize, and prioritize for you.",
-      gradient: "from-[#6366f1] to-[#8b5cf6]",
-    },
-    {
-      icon: Zap,
-      title: "MCP Integration",
-      description:
-        "Execute powerful commands through Model Context Protocol. The true strength of NeuroInbox.",
-      gradient: "from-[#14b8a6] to-[#06b6d4]",
-    },
-    {
-      icon: Mail,
-      title: "Multiple Accounts",
-      description: "Manage unlimited email accounts in one unified interface. Switch contexts effortlessly.",
-      gradient: "from-[#8b5cf6] to-[#d946ef]",
-    },
-    {
-      icon: Shield,
-      title: "Secure by Design",
-      description: "Your API tokens are encrypted and stored securely. Complete control over your data.",
-      gradient: "from-[#f59e0b] to-[#ef4444]",
-    },
-    {
-      icon: Users,
-      title: "Custom Profiles",
-      description: "Personalize your workspace with custom avatars, themes, and preferences.",
-      gradient: "from-[#06b6d4] to-[#3b82f6]",
-    },
-    {
-      icon: Zap,
-      title: "Lightning Fast",
-      description: "Built on modern architecture for instant responses and smooth animations.",
-      gradient: "from-[#ef4444] to-[#f59e0b]",
-    },
-  ];
-  const pricing = [
-    {
-      type: "Free",
-      monthly: {
-        original: 50,
-        discounted: 0,
-      },
-      yearly: {
-        original: 100 * 12,
-        discounted: 0,
-      },
-      subtitle: "Essential tools to get started",
-      features: [
-        "Basic inbox search",
-        "Limited inbox analytics",
-        "Community support",
-      ],
-    },
-    {
-      type: "Pro",
-      monthly: {
-        original: 299,
-        discounted: 149,
-      },
-      yearly: {
-        original: 299 * 12,
-        discounted: 149 * 12,
-      },
-      subtitle: "Advanced features for power users",
-      features: [
-        "Advanced inbox search",
-        "Detailed inbox analytics",
-        "AI-assisted email writing prompts",
-        "Smart email suggestions",
-        "Priority support",
-      ],
-    },
-    {
-      type: "Business",
-      monthly: {
-        original: 599,
-        discounted: 299,
-      },
-      yearly: {
-        original: 599 * 12,
-        discounted: 299 * 12,
-      },
-      subtitle: "Scalable solutions for teams and businesses",
-      features: [
-        "Enterprise-grade inbox search",
-        "Advanced analytics and reporting",
-        "AI-powered email drafting and optimization",
-        "Multi-account email management",
-        "Team collaboration tools",
-        "Dedicated support",
-      ],
-    },
-  ];
+type Feature = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  accent: string;
+};
 
+type Plan = {
+  name: string;
+  price: string;
+  subtitle: string;
+  features: string[];
+  featured?: boolean;
+};
 
+const features: Feature[] = [
+  {
+    icon: Bot,
+    title: "AI inbox triage",
+    description:
+      "Surface urgent threads, draft replies, and keep routine follow-ups moving without context switching.",
+    accent: "from-emerald-500/20 via-emerald-500/5 to-transparent",
+  },
+  {
+    icon: Command,
+    title: "Command-first workflows",
+    description:
+      "Run inbox actions through a clean chat command layer so power users can move faster than traditional email tools.",
+    accent: "from-sky-500/20 via-sky-500/5 to-transparent",
+  },
+  {
+    icon: Layers3,
+    title: "Multi-account control",
+    description:
+      "Manage personal, team, and client inboxes from one workspace with clear context boundaries.",
+    accent: "from-amber-500/20 via-amber-500/5 to-transparent",
+  },
+  {
+    icon: Workflow,
+    title: "Human + AI collaboration",
+    description:
+      "Keep approvals, escalations, and notes in the same thread so your team never loses the reasoning behind an action.",
+    accent: "from-rose-500/20 via-rose-500/5 to-transparent",
+  },
+  {
+    icon: BarChart3,
+    title: "Operational visibility",
+    description:
+      "Track backlog risk, first-response time, and queue health in a dashboard built for daily operations.",
+    accent: "from-cyan-500/20 via-cyan-500/5 to-transparent",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Professional by default",
+    description:
+      "A restrained, secure workspace aesthetic that feels credible for clients, operators, and executives alike.",
+    accent: "from-slate-500/20 via-slate-500/5 to-transparent",
+  },
+];
 
+const workflow = [
+  {
+    step: "01",
+    title: "Connect your inboxes",
+    copy: "Use the existing Google auth flow to bring accounts in without breaking your current login experience.",
+  },
+  {
+    step: "02",
+    title: "Brief the copilot once",
+    copy: "Tell NeuroInbox how to prioritize, draft, or summarize. The assistant keeps thread context available as you work.",
+  },
+  {
+    step: "03",
+    title: "Operate from one workspace",
+    copy: "Review flagged threads, send polished replies, and watch queue health from a dashboard designed for real inbox operations.",
+  },
+];
 
+const plans: Plan[] = [
+  {
+    name: "Starter",
+    price: "$0",
+    subtitle: "For solo operators exploring the workspace.",
+    features: [
+      "Single connected account",
+      "Core chat workflow",
+      "Basic analytics",
+    ],
+  },
+  {
+    name: "Pro",
+    price: "$24",
+    subtitle: "For consultants and founders managing multiple inboxes.",
+    features: [
+      "Unlimited threads",
+      "Priority queue insights",
+      "Smart reply workflows",
+      "Shared notes",
+    ],
+    featured: true,
+  },
+  {
+    name: "Scale",
+    price: "$79",
+    subtitle: "For teams running support, sales, or exec inbox operations.",
+    features: [
+      "Team collaboration",
+      "SLA visibility",
+      "Custom playbooks",
+      "Priority support",
+    ],
+  },
+];
+
+const reveal = {
+  hidden: { opacity: 0, y: 32 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as const },
+  },
+};
+
+const stagger = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+};
+
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+  align = "center",
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  align?: "center" | "left";
+}) {
   return (
-    <div className="min-h-screen w-full background flex flex-col justify-between animated-bg">
-      {/* Header */}
-      <Header />
-      {/* Hero Section */}
-      <HeroSection />
-
-      {/* Features Section */}
-      <Wrapper sectionid="features">
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
-        >
-          <h2 className="mb-4 text-4xl font-bold text-foreground md:text-5xl">Everything you need to master email</h2>
-          <p className="mx-auto max-w-2xl text-lg text-foreground/60 text-balance">
-            Built for professionals who demand intelligence, speed, and seamless integration
-          </p>
-        </motion.div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {FeatureItems.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ y: 40, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative overflow-hidden rounded-xl glass-card p-6 smooth-transition cursor-pointer"
-            >
-              {/* Hover Gradient Effect */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-
-              <motion.div
-                className={`mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} shadow-lg`}
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.6 }}
-              >
-                <feature.icon className="h-7 w-7 text-white" />
-              </motion.div>
-
-              <h3 className="mb-3 text-xl text-foreground font-bold">{feature.title}</h3>
-              <p className="text-foreground/60 leading-relaxed">{feature.description}</p>
-
-              {/* Arrow Icon on Hover */}
-              <motion.div
-                className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100"
-                initial={{ x: -10 }}
-                whileHover={{ x: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ArrowRight className="h-5 w-5 text-foreground/40" />
-              </motion.div>
-            </motion.div>
-          ))}
-        </div>
-      </Wrapper>
-
-
-      {/* Pricing  */}
-
-      <Wrapper sectionid="pricing">
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
-        >
-          <h2 className="mb-4 text-4xl font-bold text-foreground md:text-5xl">Simple, Transparent Pricing</h2>
-          <p className="mx-auto max-w-2xl text-lg text-foreground/60 text-balance">
-            Choose the perfect plan for your needs. All plans include 14-day free trial.
-          </p>
-        </motion.div>
-
-        <Tabs defaultValue="month" className="w-full">
-          <TabsList className="mx-auto  p-2">
-            <TabsTrigger value="month">Month</TabsTrigger>
-            <TabsTrigger value="year">Year</TabsTrigger>
-          </TabsList>
-
-          {/* Monthly */}
-          <TabsContent value="month" className="mt-10">
-            <div className="grid gap-6 md:grid-cols-3">
-              {pricing.map((plan, index) => {
-                const isPopular = index === 1; // center card
-
-                return (
-                  <motion.div
-                    key={plan.type}
-                    initial={{ y: 40, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="smooth-transition h-full"
-                  >
-                    <CardSpotlight
-                      className={cn(
-                        "relative flex flex-col gap-4 rounded-xl p-6 h-full glass-card",
-                        isPopular
-                          ? "scale-105 ring-2 ring-primary shadow-2xl"
-                          : "ring-1 ring-primary/40 shadow-lg"
-                      )}
-                    >
-                      {isPopular && (
-                        <motion.span
-                          className="absolute -top-3 -right-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 px-4 py-1.5 text-xs font-semibold text-black shadow-lg"
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
-                          Most Popular
-                        </motion.span>
-                      )}
-
-                      <h3 className="text-2xl font-bold">{plan.type}</h3>
-
-                      <div className="flex items-end gap-2">
-                        <span className="text-4xl font-bold gradient-text">
-                          ${plan.monthly.discounted}
-                        </span>
-                        <span
-                          className={cn(
-                            "text-sm line-through",
-                            isPopular
-                              ? "text-primary-foreground/70"
-                              : "text-muted-foreground"
-                          )}
-                        >
-                          ${plan.monthly.original}
-                        </span>
-                        <span className="text-sm opacity-70">/month</span>
-                      </div>
-
-                      <p
-                        className={cn(
-                          "text-sm",
-                          isPopular
-                            ? "text-primary-foreground/80"
-                            : "text-muted-foreground"
-                        )}
-                      >
-                        {plan.subtitle}
-                      </p>
-
-                      <ul className="mt-4 space-y-3 text-sm flex-1">
-                        {plan.features.map((f, i) => (
-                          <motion.li
-                            key={i}
-                            className="flex gap-2 items-center"
-                            initial={{ x: -10, opacity: 0 }}
-                            whileInView={{ x: 0, opacity: 1 }}
-                            transition={{ delay: i * 0.05 }}
-                          >
-                            <CircleCheckIcon className="text-green-500 flex-shrink-0" size={18} />
-                            <span>{f}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-
-                      <Button
-                        variant={isPopular ? "secondary" : "default"}
-                        className="w-full mt-4 font-semibold"
-                        size="lg"
-                      >
-                        Get Started
-                      </Button>
-                    </CardSpotlight>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </TabsContent>
-
-          {/* Yearly */}
-          <TabsContent value="year" className="mt-10">
-            <div className="grid gap-6 md:grid-cols-3">
-              {pricing.map((plan, index) => {
-                const isPopular = index === 1;
-
-                return (
-                  <motion.div
-                    key={plan.type}
-                    initial={{ y: 40, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="smooth-transition h-full"
-                  >
-                    <CardSpotlight
-                      className={cn(
-                        "relative flex flex-col gap-4 rounded-xl p-6 h-full glass-card",
-                        isPopular
-                          ? "scale-105 ring-2 ring-primary shadow-2xl"
-                          : "ring-1 ring-primary/40 shadow-lg"
-                      )}
-                    >
-                      {isPopular && (
-                        <motion.span
-                          className="absolute -top-3 -right-3 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 px-4 py-1.5 text-xs font-semibold text-black shadow-lg"
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
-                          Best Value
-                        </motion.span>
-                      )}
-
-                      <h3 className="text-2xl font-bold">{plan.type}</h3>
-
-                      <div className="flex items-end gap-2">
-                        <span className="text-4xl font-bold gradient-text">
-                          ${plan.yearly.discounted}
-                        </span>
-                        <span
-                          className={cn(
-                            "text-sm line-through",
-                            isPopular
-                              ? "text-primary-foreground/70"
-                              : "text-muted-foreground"
-                          )}
-                        >
-                          ${plan.yearly.original}
-                        </span>
-                        <span className="text-sm opacity-70">/year</span>
-                      </div>
-
-                      <p
-                        className={cn(
-                          "text-sm",
-                          isPopular
-                            ? "text-primary-foreground/80"
-                            : "text-muted-foreground"
-                        )}
-                      >
-                        {plan.subtitle}
-                      </p>
-
-                      <ul className="mt-4 space-y-3 text-sm flex-1">
-                        {plan.features.map((f, i) => (
-                          <motion.li
-                            key={i}
-                            className="flex gap-2 items-center"
-                            initial={{ x: -10, opacity: 0 }}
-                            whileInView={{ x: 0, opacity: 1 }}
-                            transition={{ delay: i * 0.05 }}
-                          >
-                            <CircleCheckIcon className="text-green-500 flex-shrink-0" size={18} />
-                            <span>{f}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-
-                      <Button
-                        variant={isPopular ? "secondary" : "default"}
-                        className="w-full mt-4 font-semibold"
-                        size="lg"
-                      >
-                        Get Started
-                      </Button>
-                    </CardSpotlight>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </Wrapper>
-
-
-
-      {/* How it Works Section */}
-      <Wrapper sectionid="how-it-works">
-
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
-        >
-          <h2 className="mb-4 text-4xl font-bold text-primary md:text-5xl">Simple to start. Powerful to master.</h2>
-          <p className="mx-auto max-w-2xl text-lg text-foreground/50 text-balance">
-            Get up and running in minutes with our streamlined onboarding
-          </p>
-        </motion.div>
-
-
-        <div className="grid gap-8 md:grid-cols-3">
-          {workItems.map((step, index) => (
-            <motion.div
-              key={step.step}
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-              className="relative glass-card p-8 rounded-xl smooth-transition"
-            >
-              <motion.div
-                className="mb-6 text-6xl font-bold gradient-text"
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 200 }}
-              >
-                {step.step}
-              </motion.div>
-              <h3 className="mb-3 text-2xl font-bold text-foreground">{step.title}</h3>
-              <p className="text-foreground/60 leading-relaxed">{step.description}</p>
-              {index < 2 && (
-                <motion.div
-                  className="absolute -right-4 top-1/2 hidden h-px w-8 -translate-y-1/2 bg-gradient-to-r from-primary/50 to-transparent md:block"
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ duration: 0.8, delay: 0.3 }}
-                />
-              )}
-            </motion.div>
-          ))}
-        </div>
-      </Wrapper>
-
-
-      {/* CTA Section */}
-      <Wrapper>
-        <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          whileHover={{ y: -6 }}
-          className="relative overflow-hidden rounded-3xl glass-card p-16 text-center"
-        >
-          {/* Animated Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#6366f1]/20 via-[#14b8a6]/20 to-[#8b5cf6]/20 mesh-gradient" />
-
-          {/* Glow Effect */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-[#6366f1]/30 to-[#14b8a6]/30 rounded-full blur-3xl" />
-
-          <div className="relative z-10">
-            <motion.h2
-              className="mb-4 text-5xl font-bold text-foreground md:text-6xl"
-              initial={{ scale: 0.9 }}
-              whileInView={{ scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              Ready to transform{" "}
-              <span className="gradient-text">your inbox?</span>
-            </motion.h2>
-
-            <motion.p
-              className="mb-10 text-xl text-foreground/70 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              Join thousands of professionals using AI to master their email workflow
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Link href="/dashboard">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button size="lg" variant="secondary" className="btn-glow px-10 py-7 text-lg font-semibold shadow-2xl">
-                    Get Started for Free
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </motion.div>
-              </Link>
-            </motion.div>
-          </div>
-        </motion.div>
-      </Wrapper>
-      {/* Footer */}
-      <footer className="border-t border-white/10 px-6 py-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#6366f1] to-[#14b8a6]">
-                <Mail className="h-5 w-5 text-white" />
-              </div>
-              <span className="font-bold">NeuroInbox</span>
-            </div>
-
-            <div className="flex gap-8 text-sm text-foreground">
-              <Link href="#" className="transition-colors hover:text-foreground/40">
-                Privacy
-              </Link>
-              <Link href="#" className="transition-colors hover:text-foreground/40">
-                Terms
-              </Link>
-              <Link href="#" className="transition-colors hover:text-foreground/40">
-                Contact
-              </Link>
-            </div>
-
-            <p className="text-sm text-gray-400">© 2025 NeuroInbox. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  )
+    <motion.div
+      variants={reveal}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+      className={cn(
+        "mx-auto max-w-3xl space-y-4",
+        align === "center" ? "text-center" : "text-left",
+      )}
+    >
+      <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-4 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur">
+        <Sparkles className="h-4 w-4 text-primary" />
+        <span>{eyebrow}</span>
+      </div>
+      <h2 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+        {title}
+      </h2>
+      <p className="text-lg leading-8 text-muted-foreground">{description}</p>
+    </motion.div>
+  );
 }
 
-const Wrapper = ({ children, sectionid }: {
-  children: ReactNode,
-  sectionid?: string
-}) => {
-
+function WorkspacePreview() {
   return (
-    <section id={sectionid} className="px-6 py-20">
-      <div className="mx-auto max-w-7xl">
-        {children}
+    <motion.div
+      initial={{ opacity: 0, y: 40, rotateX: 10 }}
+      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="relative"
+    >
+      <div className="ambient-orb ambient-orb--teal -left-10 top-10 h-44 w-44" />
+      <div className="ambient-orb ambient-orb--blue -right-6 bottom-8 h-36 w-36" />
+
+      <div className="surface-panel shimmer-border relative overflow-hidden p-3">
+        <div className="flex items-center justify-between rounded-[22px] border border-border/70 bg-background/65 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="h-3 w-3 rounded-full bg-rose-400" />
+            <span className="h-3 w-3 rounded-full bg-amber-400" />
+            <span className="h-3 w-3 rounded-full bg-emerald-400" />
+          </div>
+          <div className="rounded-full border border-border/70 bg-card/80 px-3 py-1 text-xs font-medium text-muted-foreground">
+            neuroinbox.app
+          </div>
+        </div>
+
+        <div className="mt-3 grid gap-3 lg:grid-cols-[220px_minmax(0,1fr)]">
+          <div className="surface-muted hidden flex-col gap-3 p-4 lg:flex">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold">Conversations</p>
+              <div className="rounded-full bg-primary/12 px-2 py-1 text-xs text-primary">
+                18 active
+              </div>
+            </div>
+            {[
+              "CEO follow-up",
+              "Priority support queue",
+              "Launch partner outreach",
+              "Billing exceptions",
+            ].map((item, index) => (
+              <motion.div
+                key={item}
+                initial={{ opacity: 0, x: -18 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.45 + index * 0.08, duration: 0.45 }}
+                className={cn(
+                  "rounded-2xl border px-3 py-3 text-sm",
+                  index === 0
+                    ? "border-primary/20 bg-primary/10 text-foreground"
+                    : "border-border/70 bg-card/65 text-muted-foreground",
+                )}
+              >
+                {item}
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="surface-muted overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  NeuroInbox Copilot
+                </p>
+                <h3 className="text-xl font-semibold text-foreground">
+                  Inbox ops for Acme Ventures
+                </h3>
+              </div>
+              <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                Live queue synced
+              </div>
+            </div>
+
+            <div className="space-y-4 px-5 py-5">
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55, duration: 0.45 }}
+                className="max-w-[78%] rounded-[24px] rounded-bl-md border border-border/70 bg-card/75 p-4"
+              >
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  Assistant
+                </p>
+                <p className="mt-2 text-sm leading-7 text-foreground">
+                  I found 6 high-priority threads, drafted replies for 3, and
+                  queued 2 follow-up reminders. Want the executive summary or
+                  the draft set first?
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.68, duration: 0.45 }}
+                className="ml-auto max-w-[72%] rounded-[24px] rounded-br-md bg-primary px-4 py-4 text-primary-foreground shadow-lg"
+              >
+                <p className="text-xs uppercase tracking-[0.18em] text-primary-foreground/70">
+                  You
+                </p>
+                <p className="mt-2 text-sm leading-7">
+                  Summarize the urgent threads, then prep replies in a calm
+                  executive tone.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.82, duration: 0.45 }}
+                className="grid gap-3 md:grid-cols-3"
+              >
+                {[
+                  {
+                    label: "Urgent now",
+                    value: "06",
+                    tone: "text-rose-600 dark:text-rose-300",
+                  },
+                  {
+                    label: "Replies drafted",
+                    value: "14",
+                    tone: "text-emerald-600 dark:text-emerald-300",
+                  },
+                  {
+                    label: "Avg. response",
+                    value: "12m",
+                    tone: "text-sky-600 dark:text-sky-300",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-[22px] border border-border/70 bg-card/80 p-4"
+                  >
+                    <p className="text-sm text-muted-foreground">
+                      {item.label}
+                    </p>
+                    <p className={cn("mt-2 text-3xl font-semibold", item.tone)}>
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            <div className="border-t border-border/70 bg-card/60 px-5 py-4">
+              <div className="flex items-center gap-3 rounded-[24px] border border-border/80 bg-background/80 p-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                  <Send className="h-5 w-5" />
+                </div>
+                <p className="flex-1 text-sm text-muted-foreground">
+                  Ask about email priorities, draft responses, or run a workflow
+                  command.
+                </p>
+                <div className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+                  Send
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
-  )
+    </motion.div>
+  );
+}
+
+function FeatureCard({ icon: Icon, title, description, accent }: Feature) {
+  return (
+    <motion.div
+      variants={reveal}
+      className="surface-panel group relative overflow-hidden p-6"
+      whileHover={{ y: -8, transition: { duration: 0.25 } }}
+    >
+      <div
+        className={cn("absolute inset-0 bg-gradient-to-br opacity-80", accent)}
+      />
+      <div className="relative">
+        <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-card/90 text-primary shadow-sm">
+          <Icon className="h-6 w-6" />
+        </div>
+        <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">
+          {description}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <div className="relative min-h-screen overflow-hidden background">
+      <Header />
+      <div className="ambient-orb ambient-orb--teal left-[-7rem] top-[8rem] h-72 w-72" />
+      <div className="ambient-orb ambient-orb--blue right-[-4rem] top-[12rem] h-64 w-64" />
+      <div className="ambient-orb ambient-orb--amber bottom-[18rem] left-[18%] h-52 w-52" />
+
+      <main>
+        <section className="animated-bg relative px-6 pb-24 pt-36 sm:px-8 lg:px-10 lg:pb-32 lg:pt-40">
+          <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:items-center">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+              className="max-w-3xl"
+            >
+              <motion.div
+                variants={reveal}
+                className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-4 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur"
+              >
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span>Redesigned for AI-first inbox operations</span>
+              </motion.div>
+
+              <motion.h1
+                variants={reveal}
+                className="mt-8 text-5xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+              >
+                The professional inbox workspace that feels as polished as your
+                AI stack.
+              </motion.h1>
+
+              <motion.p
+                variants={reveal}
+                className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl"
+              >
+                NeuroInbox blends a premium landing experience with a clean,
+                modern AI workspace for triage, drafting, and email operations.
+                The result feels closer to ChatGPT, Gemini, and Claude than a
+                typical admin panel.
+              </motion.p>
+
+              <motion.div
+                variants={reveal}
+                className="mt-8 flex flex-col gap-3 sm:flex-row"
+              >
+                <Button
+                  asChild
+                  size="lg"
+                  className="btn-glow rounded-full px-7 text-base"
+                >
+                  <Link href="/signin">
+                    Launch workspace
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="secondary"
+                  className="rounded-full px-7 text-base"
+                >
+                  <Link href="#workspace">
+                    Preview interface
+                    <ChevronRight className="h-5 w-5" />
+                  </Link>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                variants={reveal}
+                className="mt-10 grid gap-3 sm:grid-cols-3"
+              >
+                {[
+                  { label: "Faster triage", value: "4.2x" },
+                  { label: "Draft quality", value: "94%" },
+                  { label: "Context retention", value: "Always-on" },
+                ].map((item) => (
+                  <div key={item.label} className="surface-muted p-4">
+                    <p className="text-sm text-muted-foreground">
+                      {item.label}
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold text-foreground">
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
+              </motion.div>
+
+              <motion.div
+                variants={reveal}
+                className="mt-10 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
+              >
+                <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-2">
+                  <Inbox className="h-4 w-4 text-primary" />
+                  Multi-account inboxes
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-2">
+                  <MessageSquareText className="h-4 w-4 text-primary" />
+                  AI-native conversation flow
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-2">
+                  <ShieldCheck className="h-4 w-4 text-primary" />
+                  Existing auth logic preserved
+                </div>
+              </motion.div>
+            </motion.div>
+
+            <WorkspacePreview />
+          </div>
+        </section>
+
+        <section id="features" className="px-6 py-24 sm:px-8 lg:px-10">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeading
+              eyebrow="Platform capabilities"
+              title="A sharper visual identity and a more credible product experience."
+              description="The redesign emphasizes calm surfaces, focused typography, and motion that supports comprehension instead of distracting from it."
+            />
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+            >
+              {features.map((feature) => (
+                <FeatureCard key={feature.title} {...feature} />
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        <section id="workflow" className="px-6 py-24 sm:px-8 lg:px-10">
+          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <SectionHeading
+              eyebrow="Workflow"
+              title="Built for the way AI operators actually work."
+              description="Instead of forcing users through email-era UX, the new experience organizes work the way modern chat copilots do: one clean conversation surface, contextual side panels, and a clear action hierarchy."
+              align="left"
+            />
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              className="space-y-4"
+            >
+              {workflow.map((item) => (
+                <motion.div
+                  key={item.step}
+                  variants={reveal}
+                  className="surface-panel flex gap-5 p-6"
+                >
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary text-lg font-semibold text-primary-foreground">
+                    {item.step}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                      {item.copy}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        <section id="workspace" className="px-6 py-24 sm:px-8 lg:px-10">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeading
+              eyebrow="Workspace preview"
+              title="A dashboard and chat interface designed to feel native to modern AI products."
+              description="The new dashboard combines a polished chat surface with queue insights, conversation history, and operational side panels so the product looks and behaves like a serious platform."
+            />
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={stagger}
+              className="mt-14 grid gap-5 xl:grid-cols-[1.1fr_0.9fr]"
+            >
+              <motion.div
+                variants={reveal}
+                className="surface-panel overflow-hidden p-6"
+              >
+                <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+                  <div className="surface-muted p-5">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">
+                          Chat workspace
+                        </p>
+                        <h3 className="text-2xl font-semibold text-foreground">
+                          Claude-clean composition, tuned for inbox tasks
+                        </h3>
+                      </div>
+                      <div className="rounded-full bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+                        Framer Motion powered
+                      </div>
+                    </div>
+                    <div className="mt-6 space-y-3">
+                      {[
+                        "Calm, neutral canvas with high-contrast content hierarchy",
+                        "Suggested prompts and context cards before the first message",
+                        "Modern message bubbles with cleaner spacing and composer layout",
+                      ].map((item) => (
+                        <div
+                          key={item}
+                          className="flex items-start gap-3 rounded-2xl border border-border/70 bg-card/80 px-4 py-4"
+                        >
+                          <WandSparkles className="mt-0.5 h-4 w-4 text-primary" />
+                          <p className="text-sm leading-7 text-muted-foreground">
+                            {item}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="surface-muted p-5">
+                    <p className="text-sm text-muted-foreground">
+                      Operations rail
+                    </p>
+                    <div className="mt-5 space-y-4">
+                      {[
+                        {
+                          icon: Clock3,
+                          title: "SLA risk",
+                          note: "2 threads need a response in the next 18 minutes.",
+                        },
+                        {
+                          icon: Users2,
+                          title: "Stakeholders",
+                          note: "VIP senders surfaced with recent account context.",
+                        },
+                        {
+                          icon: Inbox,
+                          title: "Connected inboxes",
+                          note: "3 Google accounts ready to search, draft, and triage.",
+                        },
+                      ].map((item) => (
+                        <div
+                          key={item.title}
+                          className="rounded-2xl border border-border/70 bg-card/80 p-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                              <item.icon className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-foreground">
+                                {item.title}
+                              </p>
+                              <p className="text-sm leading-6 text-muted-foreground">
+                                {item.note}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={reveal} className="surface-panel p-6">
+                <p className="text-sm text-muted-foreground">What changed</p>
+                <div className="mt-5 space-y-4">
+                  {[
+                    "Landing page upgraded from generic gradient marketing to a more premium product narrative.",
+                    "Dashboard reframed as an AI workspace with stronger information architecture.",
+                    "Chat section redesigned to resemble best-in-class conversational interfaces while staying product-specific.",
+                    "Auth pathways kept intact so sign in remains functional and predictable.",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-2xl border border-border/70 bg-card/75 px-4 py-4 text-sm leading-7 text-muted-foreground"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        <section id="pricing" className="px-6 py-24 sm:px-8 lg:px-10">
+          <div className="mx-auto max-w-7xl">
+            <SectionHeading
+              eyebrow="Pricing"
+              title="Simple plans, clearer positioning."
+              description="The pricing section now matches the rest of the design language with cleaner card hierarchy and a more polished conversion path."
+            />
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              className="mt-14 grid gap-5 lg:grid-cols-3"
+            >
+              {plans.map((plan) => (
+                <motion.div
+                  key={plan.name}
+                  variants={reveal}
+                  className={cn(
+                    "surface-panel flex h-full flex-col p-6",
+                    plan.featured
+                      ? "border-primary/30 ring-1 ring-primary/20"
+                      : undefined,
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        {plan.name}
+                      </p>
+                      <p className="mt-2 text-4xl font-semibold text-foreground">
+                        {plan.price}
+                      </p>
+                      <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                        {plan.subtitle}
+                      </p>
+                    </div>
+                    {plan.featured ? (
+                      <div className="rounded-full bg-primary/12 px-3 py-1 text-xs font-medium text-primary">
+                        Most popular
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="mt-8 space-y-3">
+                    {plan.features.map((feature) => (
+                      <div
+                        key={feature}
+                        className="flex items-start gap-3 text-sm text-muted-foreground"
+                      >
+                        <div className="mt-1 h-2 w-2 rounded-full bg-primary" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Button
+                    asChild
+                    variant={plan.featured ? "default" : "secondary"}
+                    className="mt-8 rounded-full"
+                  >
+                    <Link href="/signup">
+                      Choose {plan.name}
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="px-6 pb-24 sm:px-8 lg:px-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={reveal}
+            className="mx-auto max-w-7xl"
+          >
+            <div className="surface-panel overflow-hidden p-8 sm:p-10">
+              <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
+                    Ready to launch
+                  </p>
+                  <h2 className="mt-4 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+                    Give NeuroInbox a landing page and workspace that finally
+                    match the product ambition.
+                  </h2>
+                  <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
+                    The redesign keeps the existing auth flow functional while
+                    delivering a more professional first impression and a
+                    cleaner AI-native experience after sign-in.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="btn-glow rounded-full px-7 text-base"
+                  >
+                    <Link href="/signin">
+                      Open dashboard
+                      <ArrowRight className="h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="secondary"
+                    className="rounded-full px-7 text-base"
+                  >
+                    <Link href="/signup">Create account</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+      </main>
+    </div>
+  );
 }

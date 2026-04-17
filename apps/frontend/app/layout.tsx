@@ -33,7 +33,6 @@ export default function RootLayout({
       <body
         className={`${funnelSans.variable} ${syneMono.variable} antialiased `+"scrollbar"}
       >
-        
           <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>

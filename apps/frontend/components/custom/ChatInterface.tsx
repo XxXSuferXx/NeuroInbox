@@ -1,118 +1,258 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Send } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import {
+  ArrowUp,
+  Command,
+  Menu,
+  MessageSquareQuote,
+  Paperclip,
+  Sparkles,
+  WandSparkles,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
-    id: string;
-    role: "user" | "assistant";
-    content: string;
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp?: string;
+}
+
+interface Suggestion {
+  icon: LucideIcon;
+  title: string;
+  prompt: string;
 }
 
 interface ChatInterfaceProps {
-    messages: Message[];
-    onSendMessage: (content: string) => void;
+  messages: Message[];
+  title: string;
+  onSendMessage: (content: string) => void;
+  onOpenSidebar?: () => void;
+  isGenerating?: boolean;
 }
 
-export function ChatInterface({ messages, onSendMessage }: ChatInterfaceProps) {
-    const [input, setInput] = useState("");
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+const suggestions: Suggestion[] = [
+  {
+    icon: Sparkles,
+    title: "Morning summary",
+    prompt:
+      "Summarize the inbox and group anything urgent by sender and action needed.",
+  },
+  {
+    icon: WandSparkles,
+    title: "Draft replies",
+    prompt:
+      "Draft thoughtful replies for the highest-priority emails in a calm professional tone.",
+  },
+  {
+    icon: MessageSquareQuote,
+    title: "Action items",
+    prompt:
+      "Pull action items from today’s threads and convert them into a clear checklist.",
+  },
+  {
+    icon: Command,
+    title: "Queue clean-up",
+    prompt: "Find threads that can be archived or delegated and explain why.",
+  },
+];
 
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+export function ChatInterface({
+  messages,
+  title,
+  onSendMessage,
+  onOpenSidebar,
+  isGenerating = false,
+}: ChatInterfaceProps) {
+  const [input, setInput] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const handleSend = () => {
-        if (!input.trim()) return;
-        onSendMessage(input.trim());
-        setInput("");
-    };
+  useEffect(() => {
+    const element = textareaRef.current;
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
-    };
+    if (!element) {
+      return;
+    }
 
-    return (
-        <div className="flex flex-col h-full w-full bg-background">
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto">
-                {messages.length === 0 ? (
-                    <div className="flex items-center justify-center h-full">
-                        <div className="text-center space-y-2 px-4">
-                            <h2 className="text-2xl font-semibold text-foreground">
-                                Start a conversation
-                            </h2>
-                            <p className="text-muted-foreground">
-                                Type your message below to begin chatting
-                            </p>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="pb-32">
-                        {messages.map((message) => (
-                            <div
-                                key={message.id}
-                                className={cn(
-                                    "flex w-full py-6 px-6",
-                                    message.role === "user" ? "bg-background" : "bg-muted"
-                                )}
-                            >
-                                <div className="max-w-3xl mx-auto w-full flex gap-6">
-                                    {/* Avatar */}
-                                    <div
-                                        className={cn(
-                                            "shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold",
-                                            message.role === "user"
-                                                ? "bg-primary text-primary-foreground"
-                                                : "bg-gradient-to-br from-purple-500 to-pink-500 text-white"
-                                        )}
-                                    >
-                                        {message.role === "user" ? "U" : "AI"}
-                                    </div>
+    element.style.height = "0px";
+    element.style.height = `${Math.min(element.scrollHeight, 220)}px`;
+  }, [input]);
 
-                                    {/* Message Content */}
-                                    <div className="flex-1 min-w-0 space-y-2 pt-1">
-                                        <p className="text-base whitespace-pre-wrap break-words text-foreground">
-                                            {message.content}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                        <div ref={messagesEndRef} />
-                    </div>
-                )}
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isGenerating]);
+
+  const handleSend = () => {
+    const trimmed = input.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    onSendMessage(trimmed);
+    setInput("");
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleSuggestion = (prompt: string) => {
+    onSendMessage(prompt);
+  };
+
+  return (
+    <div className="flex h-full min-h-0 w-full flex-col">
+      <div className="border-b border-border/70  px-4 py-4 backdrop-blur sm:px-6">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            {onOpenSidebar ? (
+              <button
+                type="button"
+                onClick={onOpenSidebar}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-border/70 bg-card/80 xl:hidden"
+                aria-label="Open sidebar"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            ) : null}
+            <div className="min-w-0 ">
+              <p className="text-sm text-muted-foreground">Active workspace</p>
+              <h2 className="text-xl overflow-hidden font-semibold text-foreground">
+                {title}
+              </h2>
             </div>
-
-            {/* Input Area */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pb-6 pt-12">
-                <div className="max-w-3xl mx-auto px-6">
-                    <div className="relative flex items-end gap-2 bg-card border border-border rounded-2xl shadow-lg p-2">
-                        <textarea
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Send a message..."
-                            className="min-h-[52px] max-h-[200px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:outline-none p-3 flex-1 text-foreground placeholder:text-muted-foreground"
-                            rows={1}
-                        />
-                        <button
-                            onClick={handleSend}
-                            disabled={!input.trim()}
-                            className="h-10 w-10 shrink-0 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-                        >
-                            <Send className="h-5 w-5 text-primary-foreground" />
-                        </button>
-                    </div>
-                    <p className="text-xs text-center text-muted-foreground mt-2">
-                        Press Enter to send, Shift + Enter for new line
-                    </p>
-                </div>
-            </div>
+          </div>
         </div>
-    );
+      </div>
+
+      <div className="flex-1 overflow-y-auto scrollbar px-4 pb-8 pt-6 sm:px-6">
+        <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col">
+          {messages.length === 0 ? (
+            <div className="flex flex-1 flex-col justify-center">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45 }}
+                className="mx-auto max-w-3xl text-center"
+              >
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[24px] bg-primary/12 text-primary">
+                  <Sparkles className="h-7 w-7" />
+                </div>
+                <h3 className="mt-6 text-4xl font-semibold tracking-tight text-foreground">
+                  What should NeuroInbox help with today?
+                </h3>
+                <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
+                  Start with a prompt below, or ask the assistant to summarize
+                  your inbox, draft replies, or identify priority threads.
+                </p>
+              </motion.div>
+            </div>
+          ) : (
+            <div className="space-y-6 pb-10">
+              <AnimatePresence initial={false}>
+                {messages.map((message) => (
+                  <motion.div
+                    key={message.id}
+                    layout
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.25 }}
+                    className={cn(
+                      "flex w-full",
+                      message.role === "user" ? "justify-end" : "justify-start",
+                    )}
+                  >
+                    {message.role === "assistant" ? (
+                      <div className="flex max-w-4xl gap-4">
+                        <div className="p-5">
+                          <p className="mt-3 whitespace-pre-wrap text-[15px] leading-8 text-foreground">
+                            {message.content}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="max-w-3xl rounded-sm bg-primary px-3 py-1 text-primary-foreground">
+                        <p className="text-xs uppercase text-primary-foreground/75">
+                          You
+                        </p>
+                        <p className="whitespace-pre-wrap text-[15px] leading-8">
+                          {message.content}
+                        </p>
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {isGenerating ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex max-w-4xl gap-4"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <div className="surface-panel flex items-center gap-2 px-5 py-4">
+                    <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary" />
+                    <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary/70 [animation-delay:120ms]" />
+                    <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary/45 [animation-delay:240ms]" />
+                  </div>
+                </motion.div>
+              ) : null}
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+
+      <div className="border-t border-border/70 px-4 py-4 backdrop-blur sm:px-6">
+        <div className="mx-auto w-full max-w-5xl">
+
+          <div className="surface-panel p-3">
+            <div className="flex items-end gap-3">
+              <button
+                type="button"
+                className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border/70 bg-card/80 text-muted-foreground hover:text-foreground"
+                aria-label="Attach context"
+              >
+                <Paperclip className="h-5 w-5" />
+              </button>
+
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Ask NeuroInbox to summarize, triage, draft, or search..."
+                rows={1}
+                className="max-h-[220px] min-h-[56px] flex-1 resize-none bg-transparent px-1 py-3 text-[15px] leading-7 text-foreground outline-none placeholder:text-muted-foreground"
+              />
+
+              <button
+                type="button"
+                onClick={handleSend}
+                disabled={!input.trim()}
+                className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label="Send message"
+              >
+                <ArrowUp className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

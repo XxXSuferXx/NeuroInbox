@@ -7,7 +7,7 @@ import { AuthShell } from "@/components/custom/AuthShell";
 
 const GOOGLE_AUTH_URL = "http://localhost:3001/email/google/login";
 
-export default function SignInPage() {
+export default function SignUpPage() {
   const isAuth = useAppSelector((state) => state.UserAuth.isAuth);
   const router = useRouter();
 
@@ -25,5 +25,5 @@ export default function SignInPage() {
     return null;
   }
 
-  return <AuthShell mode="signin" onAuthenticate={handleAuthenticate} />;
+  return <AuthShell mode="signup" onAuthenticate={handleAuthenticate} />;
 }

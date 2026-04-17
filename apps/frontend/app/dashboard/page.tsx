@@ -1,170 +1,272 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Activity,
+  ArrowUpRight,
+  Clock3,
+  MailCheck,
+  ShieldCheck,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+import { Header } from "@/components/custom/header";
 import { ChatSidebar } from "@/components/custom/ChatSidebar";
 import { ChatInterface } from "@/components/custom/ChatInterface";
+import { useAppSelector } from "@/app/hooks/redux-hook";
+import { cn } from "@/lib/utils";
 
-// Mock data for demonstration
-const MOCK_CHATS = [
-    {
-        id: "1",
-        title: "Getting Started",
-        lastMessage: "How can I help you today?",
-        timestamp: "2h ago",
-    },
-    {
-        id: "2",
-        title: "Project Ideas",
-        lastMessage: "Here are some suggestions...",
-        timestamp: "1d ago",
-    },
-    {
-        id: "3",
-        title: "Code Review",
-        lastMessage: "Let me review that for you",
-        timestamp: "3d ago",
-    },
+type Role = "assistant" | "user";
+
+type Message = {
+  id: string;
+  role: Role;
+  content: string;
+  timestamp: string;
+};
+
+type ChatThread = {
+  id: string;
+  title: string;
+  lastMessage: string;
+  timestamp: string;
+};
+
+const initialChats: ChatThread[] = [
+  {
+    id: "priority-brief",
+    title: "Priority brief",
+    lastMessage: "Start with urgent senders and pending approvals.",
+    timestamp: "2m ago",
+  },
+  {
+    id: "draft-replies",
+    title: "Draft replies",
+    lastMessage: "Prepare calm responses for customer escalations.",
+    timestamp: "48m ago",
+  },
+  {
+    id: "exec-summary",
+    title: "Executive summary",
+    lastMessage: "Condense the day into a one-minute readout.",
+    timestamp: "Yesterday",
+  },
 ];
 
-const MOCK_MESSAGES = {
-    "1": [
-        { id: "m1", role: "assistant" as const, content: "Hello! How can I help you today?" },
-        { id: "m2", role: "user" as const, content: "Can you help me with my project?" },
-        { id: "m3", role: "assistant" as const, content: "Of course! I'd be happy to help. What kind of project are you working on?" },
-    ],
-    "2": [
-        { id: "m4", role: "user" as const, content: "I need some project ideas" },
-        { id: "m5", role: "assistant" as const, content: "Here are some suggestions for your next project:\n\n1. A task management app\n2. A personal blog\n3. An e-commerce platform\n4. A chat application\n\nWhich one interests you most?" },
-    ],
-    "3": [
-        { id: "m6", role: "user" as const, content: "Can you review my code?" },
-        { id: "m7", role: "assistant" as const, content: "Let me review that for you. Please share the code you'd like me to look at." },
-    ],
+const initialMessages: Record<string, Message[]> = {
+  "priority-brief": [
+   
+  ],
+  "draft-replies": [
+  ],
+  "exec-summary": [
+  
+  ],
 };
 
-const DashboardPage = () => {
-    const [currentChatId, setCurrentChatId] = useState("1");
-    const [chatHistory, setChatHistory] = useState(MOCK_CHATS);
-    const [messages, setMessages] = useState(MOCK_MESSAGES[currentChatId as keyof typeof MOCK_MESSAGES] || []);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isCollapsed, setIsCollapsed] = useState(false);
+function buildAssistantReply(content: string) {
+  const prompt = content.toLowerCase();
 
-    const handleNewChat = () => {
-        const newChatId = `${Date.now()}`;
-        const newChat = {
-            id: newChatId,
-            title: "New Chat",
-            lastMessage: "Start a conversation...",
-            timestamp: "Just now",
-        };
-        setChatHistory([newChat, ...chatHistory]);
-        setCurrentChatId(newChatId);
-        setMessages([]);
+  if (prompt.includes("summary")) {
+    return "Inbox summary: three conversations need immediate replies, two can be delegated, and the rest can be grouped into a single afternoon follow-up batch.";
+  }
+
+  if (prompt.includes("draft")) {
+    return "I drafted responses that acknowledge urgency, confirm next steps, and keep the tone calm and executive-friendly. I can tighten them further if you want a shorter version.";
+  }
+
+  if (prompt.includes("action")) {
+    return "Action list: follow up with the renewal lead, approve the finance reply, delegate the support escalation, and archive the resolved vendor thread.";
+  }
+
+  return "I can help triage that. I’d start by identifying urgency, sender priority, and whether the next step is a reply, a follow-up, or a delegation.";
+}
+
+function makeThreadTitle(content: string) {
+  const cleaned = content.trim().replace(/\s+/g, " ");
+
+  if (cleaned.length <= 28) {
+    return cleaned;
+  }
+
+  return `${cleaned.slice(0, 28)}...`;
+}
+
+export default function DashboardPage() {
+  const [currentChatId, setCurrentChatId] = useState(initialChats[0].id);
+  const [chatHistory, setChatHistory] = useState(initialChats);
+  const [messagesByChat, setMessagesByChat] =
+    useState<Record<string, Message[]>>(initialMessages);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const currentChat =
+    chatHistory.find((chat) => chat.id === currentChatId) ?? chatHistory[0];
+  const messages = messagesByChat[currentChatId] ?? [];
+
+  const closeMobileSidebar = () => setIsSidebarOpen(false);
+
+  const handleNewChat = () => {
+    const newChatId = `chat-${Date.now()}`;
+    const newThread: ChatThread = {
+      id: newChatId,
+      title: "New workspace chat",
+      lastMessage: "Start by asking NeuroInbox what matters most.",
+      timestamp: "Just now",
     };
 
-    const handleChatSelect = (chatId: string) => {
-        setCurrentChatId(chatId);
-        setMessages(MOCK_MESSAGES[chatId as keyof typeof MOCK_MESSAGES] || []);
+    setChatHistory((previous) => [newThread, ...previous]);
+    setMessagesByChat((previous) => ({ ...previous, [newChatId]: [] }));
+    setCurrentChatId(newChatId);
+    closeMobileSidebar();
+  };
+
+  const handleChatSelect = (chatId: string) => {
+    setCurrentChatId(chatId);
+    closeMobileSidebar();
+  };
+
+  const handleDeleteChat = (chatId: string) => {
+    setChatHistory((previous) => {
+      const nextChats = previous.filter((chat) => chat.id !== chatId);
+
+      if (chatId === currentChatId) {
+        setCurrentChatId(nextChats[0]?.id ?? "");
+      }
+
+      return nextChats;
+    });
+
+    setMessagesByChat((previous) => {
+      const nextMessages = { ...previous };
+      delete nextMessages[chatId];
+      return nextMessages;
+    });
+  };
+
+  const handleSendMessage = (content: string) => {
+    const activeChatId = currentChatId || `chat-${Date.now()}`;
+    const chatExists = chatHistory.some((chat) => chat.id === activeChatId);
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      content,
+      timestamp: "Just now",
     };
 
-    const handleDeleteChat = (chatId: string) => {
-        setChatHistory(chatHistory.filter((chat) => chat.id !== chatId));
-        if (chatId === currentChatId && chatHistory.length > 0) {
-            const nextChat = chatHistory.find((chat) => chat.id !== chatId);
-            if (nextChat) {
-                setCurrentChatId(nextChat.id);
-                setMessages(MOCK_MESSAGES[nextChat.id as keyof typeof MOCK_MESSAGES] || []);
-            }
-        }
-    };
+    if (!chatExists) {
+      setChatHistory((previous) => [
+        {
+          id: activeChatId,
+          title: makeThreadTitle(content),
+          lastMessage: content,
+          timestamp: "Just now",
+        },
+        ...previous,
+      ]);
+      setCurrentChatId(activeChatId);
+    }
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+    setMessagesByChat((previous) => ({
+      ...previous,
+      [activeChatId]: [...(previous[activeChatId] ?? []), userMessage],
+    }));
 
-    const handleSendMessage = (content: string) => {
-        const userMessage = {
-            id: `msg-${Date.now()}`,
-            role: "user" as const,
-            content,
-        };
+    if (chatExists) {
+      setChatHistory((previous) =>
+        previous.map((chat) =>
+          chat.id === activeChatId
+            ? {
+                ...chat,
+                title:
+                  chat.title === "New workspace chat"
+                    ? makeThreadTitle(content)
+                    : chat.title,
+                lastMessage: content,
+                timestamp: "Just now",
+              }
+            : chat,
+        ),
+      );
+    }
 
-        const newMessages = [...messages, userMessage];
-        setMessages(newMessages);
+    setIsGenerating(true);
 
-        // Simulate AI response
-        setTimeout(() => {
-            const aiMessage = {
-                id: `msg-${Date.now()}-ai`,
-                role: "assistant" as const,
-                content: "This is a demo response. In a real application, this would be generated by an AI model.",
-            };
-            setMessages([...newMessages, aiMessage]);
+    window.setTimeout(() => {
+      const assistantReply = buildAssistantReply(content);
+      const assistantMessage: Message = {
+        id: `assistant-${Date.now()}`,
+        role: "assistant",
+        content: assistantReply,
+        timestamp: "Just now",
+      };
 
-            // Update chat history
-            setChatHistory(chatHistory.map(chat =>
-                chat.id === currentChatId
-                    ? { ...chat, lastMessage: content.slice(0, 50), timestamp: "Just now" }
-                    : chat
-            ));
-        }, 1000);
-    };
+      setMessagesByChat((previous) => ({
+        ...previous,
+        [activeChatId]: [...(previous[activeChatId] ?? []), assistantMessage],
+      }));
 
-    return (
-        <>
-            {/* Header */}
+      setChatHistory((previous) =>
+        previous.map((chat) =>
+          chat.id === activeChatId
+            ? {
+                ...chat,
+                lastMessage: assistantReply,
+                timestamp: "Just now",
+              }
+            : chat,
+        ),
+      );
 
-            {/* Main Content Area - Sidebar + Chat */}
-            <div className="flex flex-1 w-full overflow-hidden pt-20 relative">
-                {/* Mobile Overlay */}
-                {isSidebarOpen && (
-                    <div
-                        className="fixed inset-0 bg-black/50 z-[90] lg:hidden top-20"
-                        onClick={toggleSidebar}
-                    />
-                )}
+      setIsGenerating(false);
+    }, 950);
+  };
 
-                {/* Sidebar - Hidden on mobile by default, toggleable */}
-                <aside
-                    className={`
-                        fixed lg:relative top-20 lg:top-0 bottom-0 left-0 z-[80]
-                        transform transition-all duration-200 ease-out
-                        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-                    `}
-                >
-                    <ChatSidebar
-                        currentChatId={currentChatId}
-                        onChatSelect={(chatId) => {
-                            handleChatSelect(chatId);
-                            // Close sidebar on mobile after selection
-                            if (window.innerWidth < 1024) {
-                                setIsSidebarOpen(false);
-                            }
-                        }}
-                        onNewChat={() => {
-                            handleNewChat();
-                            // Close sidebar on mobile after creating new chat
-                            if (window.innerWidth < 1024) {
-                                setIsSidebarOpen(false);
-                            }
-                        }}
-                        chatHistory={chatHistory}
-                        onDeleteChat={handleDeleteChat}
-                        isCollapsed={isCollapsed}
-                        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
-                    />
-                </aside>
+  return (
+    <div className="dashboard-grid relative overflow-hidden bg-background">
+      <div className="ambient-orb ambient-orb--teal left-[-6rem] top-[10rem] h-72 w-72" />
+      <div className="ambient-orb ambient-orb--blue right-[-4rem] top-[18rem] h-64 w-64" />
 
-                {/* Main Chat Area - 80% */}
-                <div className="flex-1 relative min-w-0">
-                    <ChatInterface
-                        messages={messages}
-                        onSendMessage={handleSendMessage}
-                    />
-                </div>
-            </div>
-        </>
-    );
-};
+      <div className="relative flex min-h-screen">
+        {isSidebarOpen ? (
+          <button
+            type="button"
+            className="fixed inset-0 z-30 bg-slate-950/45 xl:hidden"
+            onClick={closeMobileSidebar}
+            aria-label="Close sidebar overlay"
+          />
+        ) : null}
 
-export default DashboardPage;
+        <aside
+          className={cn(
+            "fixed bottom-4 left-4 top-[112px] z-40 transition-transform duration-300 xl:static xl:bottom-auto xl:left-auto xl:top-auto xl:z-auto xl:translate-x-0",
+            isSidebarOpen ? "translate-x-0" : "-translate-x-[120%]",
+          )}
+        >
+          <div className="surface-panel h-full overflow-hidden">
+            <ChatSidebar
+              currentChatId={currentChatId}
+              onChatSelect={handleChatSelect}
+              onNewChat={handleNewChat}
+              chatHistory={chatHistory}
+              onDeleteChat={handleDeleteChat}
+              isCollapsed={isCollapsed}
+              onToggleCollapse={() => setIsCollapsed((previous) => !previous)}
+            />
+          </div>
+        </aside>
+          <div className="bg-secondary flex w-full overflow-hidden">
+            <ChatInterface
+              title={currentChat?.title || "New workspace chat"}
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              onOpenSidebar={() => setIsSidebarOpen(true)}
+              isGenerating={isGenerating}
+            />
+          </div>
+      </div>
+    </div>
+  );
+}

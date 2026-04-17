@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { motion, MotionValue } from "motion/react";
+import { motion, MotionValue } from "framer-motion";
 import { ReactNode } from "react";
 
 const transition = {
@@ -11,17 +11,16 @@ const transition = {
 export const GoogleGeminiEffect = ({
   pathLengths,
   className,
-  children
+  children,
 }: {
   pathLengths: MotionValue[];
   title?: string;
   description?: string;
   className?: string;
-  children?: ReactNode
+  children?: ReactNode;
 }) => {
   return (
     <div className={cn("sticky top-0", className)}>
-
       <div className="w-full h-[890px] -top-55 md:-top-35  flex items-center justify-center bg-red-transparent absolute ">
         {children}
       </div>

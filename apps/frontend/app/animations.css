@@ -1,16 +1,18 @@
-/* Animated Background Component for Landing Page */
+/* Ambient motion utilities */
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) translateX(0px);
   }
   50% {
-    transform: translateY(-20px) translateX(10px);
+    transform: translateY(-18px) translateX(12px);
   }
 }
 
 @keyframes gradient-shift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -19,13 +21,14 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.5;
+  0%,
+  100% {
+    opacity: 0.45;
     transform: scale(1);
   }
   50% {
     opacity: 0.8;
-    transform: scale(1.1);
+    transform: scale(1.08);
   }
 }
 
@@ -38,149 +41,140 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
 .animated-bg {
   position: relative;
   overflow: hidden;
 }
 
 .animated-bg::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 40% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-  animation: gradient-shift 15s ease infinite;
-  background-size: 200% 200%;
-  z-index: 0;
-}
-
-.mesh-gradient {
-  position: absolute;
-  inset: 0;
-  background: 
-    radial-gradient(at 27% 37%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
-    radial-gradient(at 97% 21%, rgba(20, 184, 166, 0.2) 0px, transparent 50%),
-    radial-gradient(at 52% 99%, rgba(139, 92, 246, 0.2) 0px, transparent 50%),
-    radial-gradient(at 10% 29%, rgba(245, 158, 11, 0.15) 0px, transparent 50%),
-    radial-gradient(at 97% 96%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
-  filter: blur(60px);
-  z-index: 0;
-  animation: gradient-shift 20s ease infinite;
-  background-size: 200% 200%;
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-}
-
-.dark .glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Floating particles */
-.particle {
-  position: absolute;
-  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgb(15 118 110 / 0.16),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at 85% 18%,
+      rgb(51 132 198 / 0.12),
+      transparent 20rem
+    ),
+    radial-gradient(circle at 70% 78%, rgb(154 106 45 / 0.1), transparent 18rem);
   pointer-events: none;
-  animation: float 6s ease-in-out infinite;
 }
 
-.particle-1 {
-  width: 4px;
-  height: 4px;
-  background: rgba(99, 102, 241, 0.5);
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  animation: pulse-glow 8s ease-in-out infinite;
+  opacity: 0.65;
 }
 
-.particle-2 {
-  width: 6px;
-  height: 6px;
-  background: rgba(20, 184, 166, 0.5);
-  top: 60%;
-  left: 80%;
-  animation-delay: 2s;
+.ambient-orb--teal {
+  background: rgb(15 118 110 / 0.26);
 }
 
-.particle-3 {
-  width: 5px;
-  height: 5px;
-  background: rgba(139, 92, 246, 0.5);
-  top: 80%;
-  left: 20%;
-  animation-delay: 4s;
+.ambient-orb--blue {
+  background: rgb(51 132 198 / 0.2);
 }
 
-/* Glow effects */
-.glow-effect {
+.ambient-orb--amber {
+  background: rgb(154 106 45 / 0.18);
+}
+
+.float-slow {
+  animation: float 7s ease-in-out infinite;
+}
+
+.shimmer-border {
   position: relative;
 }
 
-.glow-effect::after {
-  content: '';
+.shimmer-border::before {
+  content: "";
   position: absolute;
-  inset: -2px;
-  background: linear-gradient(45deg, #6366f1, #14b8a6, #8b5cf6, #f59e0b);
-  border-radius: inherit;
+  inset: -1px;
   z-index: -1;
-  filter: blur(20px);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  animation: rotate 3s linear infinite;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    rgb(15 118 110 / 0.16),
+    rgb(51 132 198 / 0.18),
+    rgb(154 106 45 / 0.16)
+  );
+  background-size: 180% 180%;
+  animation: shimmer 6s linear infinite;
 }
 
-.glow-effect:hover::after {
-  opacity: 0.7;
+.dark .shimmer-border::before {
+  background: linear-gradient(
+    120deg,
+    rgb(115 214 193 / 0.18),
+    rgb(109 182 255 / 0.2),
+    rgb(247 187 116 / 0.18)
+  );
 }
 
-/* Smooth transitions */
-.smooth-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.glass-card {
+  background: rgb(255 255 255 / 0.7);
+  border: 1px solid rgb(255 255 255 / 0.55);
+  box-shadow: 0 20px 60px -42px rgb(16 32 51 / 0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
-/* Scale on hover */
-.scale-hover {
-  transition: transform 0.3s ease;
+.dark .glass-card {
+  background: rgb(13 23 36 / 0.78);
+  border: 1px solid rgb(255 255 255 / 0.08);
 }
 
-.scale-hover:hover {
-  transform: scale(1.05);
-}
-
-/* Hero gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #6366f1 0%, #14b8a6 50%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #215c8f 55%, #9a6a2d 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shift 3s ease infinite;
+  animation: gradient-shift 4s ease infinite;
 }
 
-/* Button glow */
+.dark .gradient-text {
+  background: linear-gradient(135deg, #73d6c1 0%, #6db6ff 52%, #f7bb74 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .btn-glow {
   position: relative;
   overflow: hidden;
 }
 
 .btn-glow::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgb(255 255 255 / 0.2);
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .btn-glow:hover::before {
