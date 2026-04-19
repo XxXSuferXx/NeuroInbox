@@ -2,15 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { LucideIcon } from "lucide-react";
 import {
   ArrowUp,
-  Command,
   Menu,
-  MessageSquareQuote,
   Paperclip,
   Sparkles,
-  WandSparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,13 +16,6 @@ interface Message {
   content: string;
   timestamp?: string;
 }
-
-interface Suggestion {
-  icon: LucideIcon;
-  title: string;
-  prompt: string;
-}
-
 interface ChatInterfaceProps {
   messages: Message[];
   title: string;
@@ -34,33 +23,6 @@ interface ChatInterfaceProps {
   onOpenSidebar?: () => void;
   isGenerating?: boolean;
 }
-
-const suggestions: Suggestion[] = [
-  {
-    icon: Sparkles,
-    title: "Morning summary",
-    prompt:
-      "Summarize the inbox and group anything urgent by sender and action needed.",
-  },
-  {
-    icon: WandSparkles,
-    title: "Draft replies",
-    prompt:
-      "Draft thoughtful replies for the highest-priority emails in a calm professional tone.",
-  },
-  {
-    icon: MessageSquareQuote,
-    title: "Action items",
-    prompt:
-      "Pull action items from today’s threads and convert them into a clear checklist.",
-  },
-  {
-    icon: Command,
-    title: "Queue clean-up",
-    prompt: "Find threads that can be archived or delegated and explain why.",
-  },
-];
-
 export function ChatInterface({
   messages,
   title,

@@ -20,8 +20,6 @@ const transport = new StreamableHTTPServerTransport({
 );
 
 await mcpserver.connect(transport);
-
-
 app.use(cors({
   origin:"http://localhost:3000",
   credentials:true

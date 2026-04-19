@@ -59,10 +59,12 @@ Auth.get(
 Auth.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000/login", //change this for prod
+    failureRedirect: `${process.env['FRONTEND_URL']}/login`, 
+    //change this for prod
   }),
   (req, res) => {
-    res.redirect("http://localhost:3000/dashboard"); //change this for prod
+    res.redirect(`${process.env['FRONTEND_URL']}/dashboard`); 
+    //change this for prod
   }
 );
 

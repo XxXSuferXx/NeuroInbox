@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import z from "zod";
 import { ReceivedEmailSchema, type ReceivedEmailType } from "../types/Emails.js";
+import { google } from "googleapis";
 dotenv.config();
 const API_KEY= process.env.GOOGLE_GEMINI_API;
 const ai = new GoogleGenAI({apiKey:API_KEY});
@@ -53,7 +54,7 @@ const createMcpserver = () => {
     //         })
     //     },
     //     async ({prompt})=>{
-    //         const sessionSecret;
+            
 
     //         return();
     //     }
@@ -63,7 +64,23 @@ const createMcpserver = () => {
 
 
     //Email Box Reading and Then Responding to the User 
-
+    server.registerTool(
+        "Create a Draft",
+        {
+            title:"Create a Draft as User says",
+            description:"Create a Email Draft based on User request",
+            inputSchema:{
+                prompt:z.string(),
+            },
+            outputSchema:z.object({
+                emailList:z.array(ReceivedEmailSchema),
+            })
+        },
+        async ({prompt})=>{
+            const 
+            return ();
+        }
+    )
 
 
 

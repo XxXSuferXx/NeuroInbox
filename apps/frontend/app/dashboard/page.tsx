@@ -1,20 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Activity,
-  ArrowUpRight,
-  Clock3,
-  MailCheck,
-  ShieldCheck,
-  Sparkles,
-  Zap,
-} from "lucide-react";
-import { Header } from "@/components/custom/header";
 import { ChatSidebar } from "@/components/custom/ChatSidebar";
 import { ChatInterface } from "@/components/custom/ChatInterface";
-import { useAppSelector } from "@/app/hooks/redux-hook";
 import { cn } from "@/lib/utils";
 
 type Role = "assistant" | "user";

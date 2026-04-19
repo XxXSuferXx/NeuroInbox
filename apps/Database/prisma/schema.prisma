@@ -19,7 +19,6 @@ model User {
   email String? @unique
   userplan Userplan @default(free)
   photo String?
-
   emailAccounts EmailAccounts[]
 }
 
@@ -30,9 +29,27 @@ enum Userplan {
 }
 
 model EmailAccounts {
-  id String @id
+  id String @id @default(cuid())
   userId String
   user User @relation(fields: [userId],references: [id])
   email String
-  isActive Boolean
+  chats UserChats[]
+  isActive Boolean @default(true)
+}
+
+// New Chats 
+model UserChats{
+  id String @id @default(cuid())
+  emailAccountId String
+  emailAccount EmailAccounts @relation(fields: [emailAccountId],references: [id])
+  messages Chats[]
+}
+
+// Each New Chats have messages
+model Chats {
+  id               String     @id @default(cuid())
+  usertext         String
+  chatbotresponse  Json     
+  chatId           String
+  chat             UserChats  @relation(fields: [chatId], references: [id])
 }
