@@ -18,23 +18,26 @@ const transport = new StreamableHTTPServerTransport({
   enableJsonResponse:true,
 }
 );
-
 await mcpserver.connect(transport);
 app.use(cors({
-  origin:"http://localhost:3000",
+  origin:process.env['FRONTEND_URL'],
   credentials:true
 }));
-app.use(session(
-  {
-    secret: process.env['Session_secret']||"",
-    resave: false,
-    saveUninitialized: false,
+
+app.use(session({
+  secret: process.env['Session_secret'] || "",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: false, // true in production (HTTPS)
+    sameSite: "lax"
   }
-));
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/email",Auth);
+app.use("/email/google",Auth);
 app.use("/mcp",async (req,res)=>{
   await transport.handleRequest(req,res);
 });

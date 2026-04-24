@@ -7,6 +7,22 @@ declare global {
       name: string;
       email?: string;
       picture?: string;
+      accesstoken:string;
+      refreshtoken:string;
     }
+  }
+}
+
+declare module "express-session" {
+  interface SessionData {
+    passport?: {
+      user: {
+        id: string;
+        name: string;
+        email?: string;
+        accesstoken?: string;
+        refreshtoken?: string;
+      };
+    };
   }
 }

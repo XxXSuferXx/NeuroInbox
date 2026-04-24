@@ -12,8 +12,8 @@
   },
   "scripts": {
     "build": "tsc --b",
-    "start": "node ./dist/server.js",
-    "dev": "bun run build && bun run start"
+    "start": "bun ./dist/server.js",
+    "dev": "bun --watch ./src/server.ts"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"
