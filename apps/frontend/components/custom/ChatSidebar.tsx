@@ -137,7 +137,7 @@ export function ChatSidebar({
               )}
             >
               {isCollapsed ? (
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-card/70 font-semibold">
+                <div className="flex h-11 w-11 items-center justify-center rounded-md bg-card/70 font-semibold">
                   {chat.title.charAt(0).toUpperCase()}
                 </div>
               ) : (

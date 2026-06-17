@@ -14,14 +14,14 @@ const createMcpserver = () => {
 
     //just for Checking the User 
     server.registerPrompt(
-        "Greeting",
+        "greeting",
         {
             title: "Greet user",
             description: "Greet user in the language is typed and Tell that NeuroInbox is ready to read, write, send emails",
         },
         async () => {
             const greetResponse = await ai.models.generateContent({
-                model: "gemini-1.5-flash",
+                model: "gemini-flash-latest",
                 contents: `Greet user in NeuroInbox Application in just 1 line is ready to read, write, and send emails.`
             });
 
@@ -42,7 +42,7 @@ const createMcpserver = () => {
     // Email Box Reading lists 
 
     server.registerTool(
-        "Read Mails",
+        "read_mails",
         {
             title: "Read mails from user Inbox",
             description: "This tool will read the mail from the user Inbox and sends the list to the user only top latest  mails",
@@ -88,15 +88,15 @@ const createMcpserver = () => {
                     },
                 };
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 throw error;
             }
         }
     );
 
-      //Drafting the message in emails box 
+    //Drafting the message in emails box 
     server.registerTool(
-        "Create a Draft",
+        "generate_draft",
         {
             title: "Create a Draft as User says",
             description: "Create a Email Draft based on User request",
@@ -107,9 +107,9 @@ const createMcpserver = () => {
         async ({ prompt }) => {
             let AIDraft;
             try {
-                 AIDraft = await ai.models.generateContent({
-                model: "gemini-flash-latest", 
-                contents: `Generate Email for user  ${prompt} as he describes.
+                AIDraft = await ai.models.generateContent({
+                    model: "gemini-flash-latest",
+                    contents: `Generate Email for user  ${prompt} as he describes.
                     Mail should be structured.
 
                     Extract email addresses.
@@ -120,83 +120,81 @@ const createMcpserver = () => {
                     "MailId": string | string[] | null,
                      "Subject": "..."
                     }`
-            });
+                });
                 // extract text properly
-            const text = AIDraft.text;
-            console.log(text + "Draft from ai");
-            // clean markdown if present
-            const cleanText = text?.replace(/```json|```/g, "").trim();
+                const text = AIDraft.text;
+                // clean markdown if present
+                const cleanText = text?.replace(/```json|```/g, "").trim();
 
 
-        
 
-            let parsedData: {
-                Message: string;
-                MailId: string | string[] | null;
-                Subject: string;
-            };
 
-            try {
-                parsedData = JSON.parse(cleanText!);
-            } catch (err) {
-                console.error("Invalid JSON from AI:", cleanText);
-                throw err;
-            }
+                let parsedData: {
+                    Message: string;
+                    MailId: string | string[] | null;
+                    Subject: string;
+                };
 
-            //  create draft only if MailId exists
-            let receiverMailIds: string[] = [];
-
-            if (typeof parsedData.MailId === "string") {
-                receiverMailIds = [parsedData.MailId];
-            } else if (Array.isArray(parsedData.MailId)) {
-                receiverMailIds = parsedData.MailId;
-            }
-            console.log(parsedData);
-
-            let Draft = null;
-            if (receiverMailIds.length > 0) {
-                Draft = await createDraft(
-                    receiverMailIds,
-                    parsedData.Subject,
-                    parsedData.Message);
-            }
-
-            return {
-                content: [
-                    {
-                        type: "text",
-                        text: `Draft created successfully`
-                    }
-                ],
-                structuredContent: {
-                    message: parsedData.Message,
-                    mailId: parsedData.MailId,
-                    draft: Draft
+                try {
+                    parsedData = JSON.parse(cleanText!);
+                } catch (err) {
+                    console.error("Invalid JSON from AI:", cleanText);
+                    throw err;
                 }
-            };
+
+                //  create draft only if MailId exists
+                let receiverMailIds: string[] = [];
+
+                if (typeof parsedData.MailId === "string") {
+                    receiverMailIds = [parsedData.MailId];
+                } else if (Array.isArray(parsedData.MailId)) {
+                    receiverMailIds = parsedData.MailId;
+                }
+
+                let Draft = null;
+                if (receiverMailIds.length > 0) {
+                    Draft = await createDraft(
+                        receiverMailIds,
+                        parsedData.Subject,
+                        parsedData.Message);
+                }
+
+                return {
+                    content: [
+                        {
+                            type: "text",
+                            text: `Draft created successfully`
+                        }
+                    ],
+                    structuredContent: {
+                        message: parsedData.Message,
+                        mailId: parsedData.MailId,
+                        draft: Draft
+                    }
+                };
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 throw error;
             }
-           
+
         }
     );
 
     // Drafting and Sending the mails from mailbox.
     server.registerTool(
-        "Sending Mails",
+        "send_mails",
         {
-            title:"Sending Mails",
-            description:"First creating a Draft mail and then send mail to the reciever user entered",
-            inputSchema:{
-                prompt:z.string()
+            title: "Sending Mails",
+            description: "First creating a Draft mail and then send mail to the reciever user entered",
+            inputSchema: {
+                prompt: z.string()
             }
         },
-        async ({prompt})=>{
+        async ({ prompt }) => {
             try {
-                 const AIDraft = await ai.models.generateContent({
-                model: "gemini-flash-latest", 
-                contents: `Generate Email for user  ${prompt} as he describes.
+                const AIDraft = await ai.models.generateContent({
+                    model: "gemini-flash-latest",
+                    contents: `Generate Email for user  ${prompt} as he describes.
                     Mail should be structured.
 
                     Extract email addresses.
@@ -207,55 +205,53 @@ const createMcpserver = () => {
                     "MailId": string | string[] | null,
                      "Subject": "..."
                     }`
-            });
+                });
 
-            // extract text properly
-            const text = AIDraft.text;
-            console.log(text + "Draft from ai");
-            // clean markdown if present
-            const cleanText = text?.replace(/```json|```/g, "").trim();
+                // extract text properly
+                const text = AIDraft.text;
+                // clean markdown if present
+                const cleanText = text?.replace(/```json|```/g, "").trim();
 
-            let parsedData: {
-                Message: string;
-                MailId: string | string[] | null;
-                Subject: string;
-            };
+                let parsedData: {
+                    Message: string;
+                    MailId: string | string[] | null;
+                    Subject: string;
+                };
 
-            try {
-                parsedData = JSON.parse(cleanText!);
-            } catch (err) {
-                console.error("Invalid JSON from AI:", cleanText);
-                throw err;
-            }
+                try {
+                    parsedData = JSON.parse(cleanText!);
+                } catch (err) {
+                    console.error("Invalid JSON from AI:", cleanText);
+                    throw err;
+                }
 
-            //  create draft only if MailId exists
-            let receiverMailIds: string[] = [];
+                //  create draft only if MailId exists
+                let receiverMailIds: string[] = [];
 
-            if (typeof parsedData.MailId === "string") {
-                receiverMailIds = [parsedData.MailId];
-            } else if (Array.isArray(parsedData.MailId)) {
-                receiverMailIds = parsedData.MailId;
-            }
-            console.log(parsedData);
+                if (typeof parsedData.MailId === "string") {
+                    receiverMailIds = [parsedData.MailId];
+                } else if (Array.isArray(parsedData.MailId)) {
+                    receiverMailIds = parsedData.MailId;
+                }
 
-            let Draft = null;
-            if (receiverMailIds.length > 0) {
-                Draft = await createDraft(
-                    receiverMailIds,
-                    parsedData.Subject,
-                    parsedData.Message);
-            }
-            const sent = await sendMail(Draft?.id || "");
-            return {
-                content:[
-                    {
-                        type:"text",
-                        text:"Mail Send Successfully"
-                    }
-                ]
-            }
+                let Draft = null;
+                if (receiverMailIds.length > 0) {
+                    Draft = await createDraft(
+                        receiverMailIds,
+                        parsedData.Subject,
+                        parsedData.Message);
+                }
+                const sent = await sendMail(Draft?.id || "");
+                return {
+                    content: [
+                        {
+                            type: "text",
+                            text: "Mail Send Successfully"
+                        }
+                    ]
+                }
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 throw error;
             }
         }

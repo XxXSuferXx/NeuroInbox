@@ -11,10 +11,10 @@
     "@types/passport-google-oauth20": "^2.0.17"
   },
   "scripts": {
-    "build": "tsc --b",
-    "start": "bun ./dist/server.js",
-    "dev": "bun --watch ./src/server.ts"
-  },
+  "build": "tsc",
+  "start": "bun ./dist/server.js",
+  "dev": "bun --watch src/server.ts"
+},
   "peerDependencies": {
     "typescript": "^5.9.3"
   },

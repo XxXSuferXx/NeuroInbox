@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import axios from "axios";
 import {
   ArrowUp,
   Menu,
@@ -49,13 +50,38 @@ export function ChatInterface({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isGenerating]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const trimmed = input.trim();
 
     if (!trimmed) {
       return;
     }
-
+   try {
+    const res = await axios.post(
+  "http://localhost:3001/mcp",
+  {
+    jsonrpc: "2.0",
+    id: "1",
+    method: "tools/call",
+    params: {
+      name: "read_mails",
+      arguments: {
+        prompt: trimmed
+      }
+    }
+  },
+  {
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    withCredentials: true
+  }
+);
+    console.log(res.data);
+   } catch (error) {
+    console.log(error);
+   }
     onSendMessage(trimmed);
     setInput("");
   };
@@ -144,9 +170,6 @@ export function ChatInterface({
                       </div>
                     ) : (
                       <div className="max-w-3xl rounded-sm bg-primary px-3 py-1 text-primary-foreground">
-                        <p className="text-xs uppercase text-primary-foreground/75">
-                          You
-                        </p>
                         <p className="whitespace-pre-wrap text-[15px] leading-8">
                           {message.content}
                         </p>
